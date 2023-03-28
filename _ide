@@ -1,0 +1,3 @@
+tmux split-window -v -p30 
+tmux split-window -h -p40
+tmux split-window -h -p50
