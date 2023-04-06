@@ -24,11 +24,20 @@ function checkFileNotEmpty(){
 	fi
 }
 
-# get access token from file
-function getAccessToken(){
+# get access or refresh token from file
+function getToken(){
 	file_dir=$1	
-	a_token=$(cat $file_dir | grep -oP "(?<=\"access\":\")[^\"]+")
-	echo $a_token
+	token_type=$2
+	case $token_type in
+		"access")
+			_token=$(cat $file_dir | grep -oP "(?<=\"access\":\")[^\"]+");;
+		"refresh")
+			_token=$(cat $file_dir | grep -oP "(?<=\"refresh\":\")[^\"]+");;
+		*) 
+			_token=$(cat $file_dir | grep -oP "(?<=\"access\":\")[^\"]+");;
+	esac
+	echo $_token
+	exit 0
 }
 
 # request to verify accessToken
