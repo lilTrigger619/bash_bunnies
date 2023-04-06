@@ -36,7 +36,7 @@ function verifyAccessToken(){
 	token_log=$1
 	url_loc=$2
 	access_token=$(getAccessToken "$token_log")
-	verify_res=$(curl -s -X POST -d token=$access_token --url $Default_base_url"$url_loc")
+	verify_res=$(curl -s -X POST -d token=$access_token --url $Default_base_url$url_loc)
 	curl_cmd_status=$?
 	if [[ $curl_cmd_status -ne 0 ]]
 	then 
@@ -44,10 +44,12 @@ function verifyAccessToken(){
 		exit 1;
 	fi
 	unset curl_cmd_status
-	$(echo $verify_res | grep -oP "(?<=\"detail\":\")[^\"]+" | grep -Pi "(invalid|expired)")
+	echo $verify_res | grep -oP "(?<=\"detail\":\")[^\"]+" | grep -Pi "(invalid|expired)" 2>&1 /dev/null
 	grep_cmd_status=$?
 
-	if [[ $grep_cmd_status -ne 0 ]]
+	# the grep command should return an error cause
+	# +the respose should be empty.
+	if [[ $grep_cmd_status -eq 0 ]]
 	then exit 1
 	fi
 	exit 0

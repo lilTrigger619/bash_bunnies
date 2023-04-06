@@ -29,6 +29,7 @@ then echo "Oops something happend!" exit 1;
 else unset curl_cmd_status;
 fi
 
-echo "response status $?, response: $request_response"
+verifyAccessToken "./token.log" "/MainApp/verify/"
+#echo "response status $?, response: $request_response"
 
 # make the login request
