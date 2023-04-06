@@ -18,7 +18,8 @@ then
 fi
 
 unset file_empty_status
-access_token=$(getAccessToken "./token.log")
+access_token=$(getToken "./token.log" "access")
+refresh_token=$(getToken "./token.log" "refresh")
 
 request_response=$(curl -s -H "Authorization: Bearer $access_token" --url http://localhost:8000/MainApp/getMiniUser/)
 curl_cmd_status=$?
@@ -29,7 +30,11 @@ then echo "Oops something happend!" exit 1;
 else unset curl_cmd_status;
 fi
 
-verifyAccessToken "./token.log" "/MainApp/verify/"
+# verify access toekn
+verifyToken "$access_token" "/MainApp/verify/"
+echo "ss"
+# verify refresh token
+verifyToken "$refresh_token" "/MainApp/verify/"
 #echo "response status $?, response: $request_response"
 
 # make the login request
