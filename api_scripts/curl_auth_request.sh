@@ -19,7 +19,6 @@ fi
 
 unset file_empty_status
 access_token=$(getToken "./token.log" "access")
-refresh_token=$(getToken "./token.log" "refresh")
 
 request_response=$(curl -s -H "Authorization: Bearer $access_token" --url http://localhost:8000/MainApp/getMiniUser/)
 curl_cmd_status=$?
@@ -30,11 +29,22 @@ then echo "Oops something happend!" exit 1;
 else unset curl_cmd_status;
 fi
 
-# verify access toekn
-verifyToken "$access_token" "/MainApp/verify/"
-echo "ss"
+refresh_token=$(getToken "./token.log" "refresh")
 # verify refresh token
-verifyToken "$refresh_token" "/MainApp/verify/"
-#echo "response status $?, response: $request_response"
+`verifyToken "$refresh_token" "/MainApp/verify/"`
+verify_response=$?
 
-# make the login request
+if [[ $verify_response -ne 0 ]]
+then
+	echo "The refresh response is invalid. Please re-login!"
+fi
+unset verify_response
+
+# verify access toekn
+`verifyToken "$access_token" "/MainApp/verify/"`
+verify_response=$?
+
+if [[ $verify_response -ne 0 ]]
+then echo "Please refresh the token!";exit 1;
+fi
+
