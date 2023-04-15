@@ -10,8 +10,18 @@ URL="http://localhost:8000/MainApp/refresh/"
 source "./utils.sh"
 
 `checkFileExist "./token.log"` # check if the token.log  file exists.
+cmd_status=$?
 
-`verifyToken "refresh" "/MainApp/verify/"` # verify if the refresh token exists.
+# check if the File exists
+if [[ $cmd_status -ne 0 ]]
+then echo file error: Token does not exist!
+	exit $cmd_status
+fi
+
+# get the refresh token.
+refresh_token=$(getToken "./token.log" "refresh")
+
+`verifyToken $refresh_token "/MainApp/verify/"` # verify if the refresh token exists.
 verify_status=$?
 
 # check verification status.
@@ -26,8 +36,6 @@ then
 	exit 0
 fi 
 
-# get the refresh token.
-refresh_token=$(getToken "./token.log" "refresh")
 
 # make refresh request otherwise
 refresh_response=$(curl -s -X POST -d refresh\=$refresh_token --url $URL)
@@ -56,5 +64,6 @@ then echo Access token no found!
 fi
 
 # when the grep cmd is successful
-echo $access_token
+
+cached_hard_reset $access_token $refresh_token
 

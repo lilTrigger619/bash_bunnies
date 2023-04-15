@@ -62,10 +62,26 @@ function verifyToken(){
 	echo $verify_res | grep -oP "(?<=\"detail\":\")[^\"]+" | grep -Pi "(invalid|expired)" > /dev/null 2>&1
 	grep_cmd_status=$?
 
+
 	# the grep command should return an error cause
 	# +the respose should be empty.
 	if [[ $grep_cmd_status -eq 0 ]]
 	then exit 1
 	fi
 	exit 0
+}
+
+#Function to reset the token.log file with the tokens provided.
+#Usage: cached_hard_reset {access token} {refresh token}
+function cached_hard_reset(){
+	LOGFILE="./token.log"
+	access_token=$1
+	refresh_token=$2
+
+	if [[ -z $access_token || -z $refresh_token ]]
+	then echo Reset error: Provide all required args
+		exit 1;
+	fi
+
+	echo "{\"access\":\"$access_token\",\"refresh\":\"$refresh_token\"}" >  $LOGFILE
 }
