@@ -7,6 +7,7 @@ Please not is uses the token stored in the token.log file in the source director
 '
 
 URL="http://localhost:8000/MainApp/refresh/"
+VerifyLoc="/MainApp/verify/"
 source "./utils.sh"
 
 `checkFileExist "./token.log"` # check if the token.log  file exists.
@@ -20,8 +21,11 @@ fi
 
 # get the refresh token.
 refresh_token=$(getToken "./token.log" "refresh")
+# get access token
+access_token=$(getToken "./token.log" "access")
 
-`verifyToken $refresh_token "/MainApp/verify/"` # verify if the refresh token exists.
+
+`verifyToken $refresh_token $VerifyLoc` # verify if the refresh token exists.
 verify_status=$?
 
 # check verification status.
@@ -29,12 +33,30 @@ if [[ $verify_status -eq 7 ]]
 then 
 	echo Fatal error occured
 	exit 7
-elif [[ $verify_status -eq 0 ]]
+elif [[ $verify_status -ne 0 ]]
 then 
-	echo Refresh token not expired!
-	echo No need to refresh.
-	exit 0
+	echo Refresh token expired!
+	echo Refresh !
+	exit $verify_status;
 fi 
+unset verify_status;
+
+# verify access Token
+`verifyToken $access_token $VerifyLoc`
+verify_status=$?
+
+if [[ $verify_status -eq 7 ]]
+then
+	echo Fatal error!
+	exit $verify_status
+elif [[ $verify_status -eq 0 ]]
+then
+	echo Token is still valid, no need to refresh. 
+	exit 0;
+fi
+unset verify_status;
+
+#continue to refresh when the verification is a 401.
 
 
 # make refresh request otherwise

@@ -44,7 +44,7 @@ unset verify_response
 verify_response=$?
 # check if verification passed else refresh.
 if [[ $verify_response -ne 0 ]]
-then echo "Please refresh the token!";exit 1;
+then echo "Please refresh the token!";exit $verify_response;
 fi
 
 # finally make the request.
