@@ -24,6 +24,8 @@ refresh_token=$(getToken "./token.log" "refresh")
 # get access token
 access_token=$(getToken "./token.log" "access")
 
+echo refresh: $refresh_token access: $access_token
+
 
 `verifyToken $refresh_token $VerifyLoc` # verify if the refresh token exists.
 verify_status=$?
