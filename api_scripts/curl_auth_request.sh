@@ -42,6 +42,35 @@ request_method="default"
 #args=($@)
 #request_url=${args[0]}
 
+# options
+options="p:u:d" # p: post, u: update, d: delete
+
+while getopts $options opt
+do
+	# incase the user sets more than one option.
+	if [[ $request_method != "default" ]]
+	then echo "Multiple options not allowed!";
+		exit 1;
+	fi
+
+	case $opt in 
+		p) 
+			request_method="POST"; 
+			opt_arg=$OPTARG;;
+		u) 
+			request_method="PUT";
+			opt_arg=$OPTARG;;
+		d) request_method="DELETE";;
+		\?) echo Unrecognized option provided;
+			exit 1;;
+		*) echo An uknown error occured!;
+			exit 1;;
+	esac
+done
+shift $(( OPTIND -1 ))
+args=($@)
+request_url=${args[0]}
+
 # check if log file not empty
 `checkFileNotEmpty "./token.log"`
 file_empty_status=$?
