@@ -72,7 +72,7 @@ shift $(( OPTIND -1 )) # remove all options and their values from the argument l
 if [[ $request_url = "None" ]]  
 then 
 	# when no url is provided
-	login_request "http://localhost:8000/login" $1 $2
+	login_request "http://localhost:8000/login/" $1 $2
 else
   # echo "The url is provided by user"
 	login_request $request_url $1 $2
